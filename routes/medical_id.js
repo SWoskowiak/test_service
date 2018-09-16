@@ -21,11 +21,13 @@ module.context.use(async (req, res, next) => {
   let medicalID = await MedicalID.fetch(userID)
 
   res.locals.medicalID = medicalID
+  console.log('middleware')
   next()
 })
 
 // Get medical_id information for a user
 router.get('/v1/medical_id/:user_id', (req, res) => {
+  console.log('route')
   res.send(`Hello ${req.pathParams.user_id}!, your medical id# is: ${res.locals.medicalID} `)
 })
   .response(['text/plain'], 'A generic greeting.')
