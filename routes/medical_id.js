@@ -32,7 +32,7 @@ async function medicalMiddleware (req, res, next) {
 }
 
 // Get medical_id information for a user
-router.get('/v1/medical_id/:user_id', medicalMiddleware, (req, res) => {
+router.get('/v1/medical_id/:user_id', medicalMiddleware, async (req, res) => {
   res.send(`Hello ${req.pathParams.user_id}!, your medical id# is: ${res.locals.medicalID} `)
 })
   .response(['text/plain'], 'A generic greeting.')
