@@ -18,11 +18,14 @@ const MedicalID = require('../resources/medical_id')
 module.context.use((req, res, next) => {
   const userID = req.pathParams.user_id
 
-  let medicalID = MedicalID.fetch(userID)
+  MedicalID.fetch(userID, (err, results) => {
+    if (err) {
+      return next(err)
+    }
 
-  res.locals.medicalID = medicalID
-  console.log('middleware')
-  next()
+    res.locals.medicalID = results
+    next()
+  })
 })
 
 // Get medical_id information for a user
