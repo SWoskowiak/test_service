@@ -19,7 +19,7 @@ module.context.use((req, res, next) => {
   const userID = req.pathParams.user_id
   res.locals = res.locals || {}
 
-  res.locals.medicalID = MedicalID.fetch(userID)
+  res.locals.medicalID = Promise.resolve(MedicalID.fetch(userID))
   next()
 })
 
