@@ -21,6 +21,7 @@ router.use('/v1/medical_id/:user_id', async (req, res, next) => {
   let medicalID = await MedicalID.fetch(userID)
 
   res.locals.medicalID = medicalID
+  next()
 })
 
 // Get medical_id information for a user
