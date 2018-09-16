@@ -23,6 +23,7 @@ module.context.use((req, res, next) => {
       return next(err)
     }
 
+    console.log(res)
     res.locals.medicalID = results
     next()
   })
