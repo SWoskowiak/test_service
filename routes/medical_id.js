@@ -23,16 +23,19 @@ const MedicalID = require('../resources/medical_id')
 //   return next()
 // })
 
-async function medicalMiddleware (req, res, next) {
+function medicalMiddleware (req, res, next) {
   const userID = req.pathParams.user_id
   res.locals = res.locals || {}
 
-  res.locals.medicalID = await MedicalID.fetch(userID)
-  return next()
+  res.locals.medicalID = MedicalID.fetch(userID, (err, res) => {
+    if (err) return next(err)
+
+    next()
+  })
 }
 
 // Get medical_id information for a user
-router.get('/v1/medical_id/:user_id', medicalMiddleware, async (req, res) => {
+router.get('/v1/medical_id/:user_id', medicalMiddleware, (req, res) => {
   res.send(`Hello ${req.pathParams.user_id}!, your medical id# is: ${res.locals.medicalID} `)
 })
   .response(['text/plain'], 'A generic greeting.')
@@ -40,14 +43,16 @@ router.get('/v1/medical_id/:user_id', medicalMiddleware, async (req, res) => {
   .description('Prints a generic greeting.')
 
 // Create medical_id information for a user
-router.put('/v1/medical_id/:user_id', async (req, res, next) => {
+router.put('/v1/medical_id/:user_id', (req, res, next) => {
   const userID = req.pathParams.user_id
   const params = req.body
 
-  let newID = await MedicalID.create(userID, params)
+  MedicalID.create(userID, params, (err, id) => {
+    if (err) return next(err)
 
-  res.json({
-    working: newID
+    res.json({
+      working: id
+    })
   })
 })
   .body(joi.object().required())

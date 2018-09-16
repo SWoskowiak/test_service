@@ -7,12 +7,15 @@ class MedicalID {
 
   }
 
-  static async fetch (userID) {
-    return 123
+  static fetch (userID, callback) {
+    return callback(null, 123)
   }
 
-  static async create (userID, params) {
-    return medicalCollection.save(params)
+  static create (userID, params, callback) {
+    medicalCollection.save(params).then((id) => {
+      console.log(`New ID: ${id}`)
+      callback(null, id)
+    })
   }
 }
 
