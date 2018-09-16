@@ -15,10 +15,10 @@ const MedicalID = require('../resources/medical_id')
 // upload state id and meta-data, view data, update or delete the ID/Rec
 
 // Basic middleware that adds a medical_id resource to res.locals
-module.context.use(async (req, res, next) => {
+module.context.use((req, res, next) => {
   const userID = req.pathParams.user_id
 
-  let medicalID = await MedicalID.fetch(userID)
+  let medicalID = MedicalID.fetch(userID)
 
   res.locals.medicalID = medicalID
   console.log('middleware')
