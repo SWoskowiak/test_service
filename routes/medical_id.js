@@ -24,6 +24,7 @@ module.context.use((req, res, next) => {
     }
 
     console.log(res)
+    res.locals = res.locals || {}
     res.locals.medicalID = results
     next()
   })
