@@ -10,7 +10,7 @@ module.context.use(router);
 
 
 router.get('/users/:id', (req, res) => {
-  res.send(`Hellow ${req.pathParams.id}!`)
+  res.send(`Hello ${req.pathParams.id}!`)
 })
 .pathParam('id', joi.string().required(), 'ID of user')
 .response(['text/plain'], 'A generic greeting.')
