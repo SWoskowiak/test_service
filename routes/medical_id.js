@@ -1,6 +1,6 @@
-const db = require('@arangodb').db
 const errors = require('@arangodb').errors
 const router = require('./router')
+const joi = require('joi')
 const MedicalID = require('../resources/medical_id')
 
 // users
@@ -15,7 +15,7 @@ const MedicalID = require('../resources/medical_id')
 // upload state id and meta-data, view data, update or delete the ID/Rec
 
 // Basic middleware that adds a medical_id resource to res.locals
-module.context.use((req, res, next) => {
+module.context.use('/v1/medical_id/:user_id', (req, res, next) => {
   const userID = req.pathParams.user_id
 
   MedicalID.fetch(userID, (err, results) => {
@@ -23,7 +23,6 @@ module.context.use((req, res, next) => {
       return next(err)
     }
 
-    console.log(res)
     res.locals = res.locals || {}
     res.locals.medicalID = results
     next()
@@ -32,7 +31,6 @@ module.context.use((req, res, next) => {
 
 // Get medical_id information for a user
 router.get('/v1/medical_id/:user_id', (req, res) => {
-  console.log('route')
   res.send(`Hello ${req.pathParams.user_id}!, your medical id# is: ${res.locals.medicalID} `)
 })
   .response(['text/plain'], 'A generic greeting.')
@@ -40,6 +38,19 @@ router.get('/v1/medical_id/:user_id', (req, res) => {
   .description('Prints a generic greeting.')
 
 // Create medical_id information for a user
-router.put('/v1/medical_id/:user_id', (req, res) => {
- 
+router.put('/v1/medical_id/:user_id', (req, res, next) => {
+  const userID = req.pathParams.user_id
+  const params = req.body
+
+  MedicalID.create(userID, params, (err, results) => {
+    if (err) {
+      return next(err)
+    }
+
+    res.json({
+      working: true
+    })
+  })
 })
+  .body(joi.object().required())
+  .description('Creates a new medical ID')
