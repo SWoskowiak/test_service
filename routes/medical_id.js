@@ -15,18 +15,12 @@ const MedicalID = require('../resources/medical_id')
 // upload state id and meta-data, view data, update or delete the ID/Rec
 
 // Basic middleware that adds a medical_id resource to res.locals
-module.context.use('/v1/medical_id/:user_id', (req, res, next) => {
+module.context.use(async (req, res, next) => {
   const userID = req.pathParams.user_id
+  res.locals = res.locals || {}
 
-  MedicalID.fetch(userID, (err, results) => {
-    if (err) {
-      return next(err)
-    }
-
-    res.locals = res.locals || {}
-    res.locals.medicalID = results
-    next()
-  })
+  res.locals.medicalID = await MedicalID.fetch(userID)
+  next()
 })
 
 // Get medical_id information for a user
@@ -38,18 +32,14 @@ router.get('/v1/medical_id/:user_id', (req, res) => {
   .description('Prints a generic greeting.')
 
 // Create medical_id information for a user
-router.put('/v1/medical_id/:user_id', (req, res, next) => {
+router.put('/v1/medical_id/:user_id', async (req, res, next) => {
   const userID = req.pathParams.user_id
   const params = req.body
 
-  MedicalID.create(userID, params, (err, results) => {
-    if (err) {
-      return next(err)
-    }
+  let newID = await MedicalID.create(userID, params)
 
-    res.json({
-      working: true
-    })
+  res.json({
+    working: newID
   })
 })
   .body(joi.object().required())
