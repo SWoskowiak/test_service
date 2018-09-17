@@ -27,10 +27,10 @@ function medicalMiddleware (req, res, next) {
   const userID = req.pathParams.user_id
   res.locals = res.locals || {}
 
-  MedicalID.fetch(userID, (err, res) => {
+  MedicalID.fetch(userID, (err, id) => {
     if (err) return next(err)
 
-    res.locals.medicalID = res
+    res.locals.medicalID = id
     next()
   })
 }
