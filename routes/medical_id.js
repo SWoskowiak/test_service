@@ -51,10 +51,12 @@ router.put('/v1/medical_id/:user_id', (req, res, next) => {
   MedicalID.create(userID, params, (err, id) => {
     if (err) return next(err)
 
-    res.json({
+    console.log('done saving')
+    res.status(201).json({
       working: id
     })
   })
 })
   .body(joi.object().required())
+  .response(['application/json'], 'id of created object')
   .description('Creates a new medical ID')

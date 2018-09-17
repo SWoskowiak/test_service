@@ -8,11 +8,11 @@ class MedicalID {
   }
 
   static fetch (userID, callback) {
-    return callback(null, 123)
+    return callback(null, 321)
   }
 
   static create (userID, params, callback) {
-    Promise.resolve(medicalCollection.save(params)).then((id) => {
+    return Promise.resolve(medicalCollection.save(params)).then((id) => {
       console.log(`New ID: ${id}`)
       callback(null, id)
     })
