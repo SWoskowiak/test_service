@@ -12,7 +12,7 @@ class MedicalID {
   }
 
   static create (userID, params, callback) {
-    medicalCollection.save(params).then((id) => {
+    Promise.resolve(medicalCollection.save(params)).then((id) => {
       console.log(`New ID: ${id}`)
       callback(null, id)
     })
