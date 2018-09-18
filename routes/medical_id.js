@@ -48,7 +48,6 @@ router.put('/v1/medical_id/:user_id', middleware.filterInputs, middleware.valida
     recommendation_number: [joi.string().required(), joi.number().required()],
     issuer: joi.string().required(),
     state: joi.string().required()
-  }).required()
-    .response(['application/json'], 'id of created object')
-    .description('Creates a new medical ID')
-  )
+  }).required())
+  .response(['application/json'], 'id of created object')
+  .description('Creates a new medical ID')
