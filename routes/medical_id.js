@@ -45,7 +45,7 @@ router.put('/v1/medical_id/:user_id', middleware.filterInputs, middleware.valida
   })
   .body(joi.object({
     expiration_date: joi.date().required(),
-    recommendation_number: [joi.string().required(), joi.number.required()],
+    recommendation_number: [joi.string().required(), joi.number().required()],
     issuer: joi.string().required(),
     state: joi.string().required()
   }).required()
