@@ -43,6 +43,12 @@ router.put('/v1/medical_id/:user_id', middleware.filterInputs, middleware.valida
         })
       })
   })
-  .body(joi.object().required())
-  .response(['application/json'], 'id of created object')
-  .description('Creates a new medical ID')
+  .body(joi.object({
+    expiration_date: joi.date().required(),
+    recommendation_number: [joi.string().required(), joi.number.required()],
+    issuer: joi.string().required(),
+    state: joi.string().required()
+  }).required()
+    .response(['application/json'], 'id of created object')
+    .description('Creates a new medical ID')
+  )
