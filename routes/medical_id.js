@@ -49,7 +49,7 @@ router.put('/v1/medical_id/:user_id', middleware.filterInputs, middleware.valida
     issuer: joi.string().required(),
     state: joi.string().required()
   }).required())
-  .response(['application/json'], 'The newly created id')
+  .response(['application/json'], 'The newly created ID')
   .description('Creates and assigns a new medical ID to a given user')
 
 // Upload image for a user

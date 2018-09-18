@@ -3,14 +3,14 @@ const multer = require('multer')
 const path = require('path')
 
 // Quick file upload setup
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, path.join(__dirname, `uploads/${req.pathParams.user_id}/medical_id`))
-  },
-  filename: (req, file, cb) => {
-    cb(null, `${req.userID}-${Date.now()}-${file.fieldname}`)
-  }
-})
+// const storage = multer.diskStorage({
+//   destination: (req, file, cb) => {
+//     cb(null, path.join(__dirname, `uploads/${req.pathParams.user_id}/medical_id`))
+//   },
+//   filename: (req, file, cb) => {
+//     cb(null, `${req.userID}-${Date.now()}-${file.fieldname}`)
+//   }
+// })
 
 module.exports = {
   // Ensure inputs are limited to only what we want to save
@@ -52,12 +52,12 @@ module.exports = {
     }
 
     next()
-  },
-  handleImageUpload: multer({
-    storage: storage,
-    limits: {
-      fileSize: 2000000, // 2MB limit
-      files: 1 // Only one file at a time
-    }
-  })
+  }
+  // imageUpload: multer({
+  //   storage: storage,
+  //   limits: {
+  //     fileSize: 2000000, // 2MB limit
+  //     files: 1 // Only one file at a time
+  //   }
+  // })
 }

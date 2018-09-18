@@ -8,10 +8,15 @@ class MedicalID {
 
   // Save a new medical ID and relate it to the user
   static create (userID, params, done) {
-    return Promise.resolve(medicalIDCollection.save(params)).then((id) => {
-      console.log(`New ID: ${id}`)
-      done(null, id)
-    })
+    // Please note: FOXX services run in a node-like environment, async is not properly supported in here
+    // See: https://docs.arangodb.com/3.3/Manual/Foxx/Dependencies.html#compatibility-caveats
+    let newID = medicalIDCollection.save(params)
+
+    done(null, newID)
+    // return Promise.resolve(medicalIDCollection.save(params)).then((id) => {
+    //   console.log(`New ID: ${id}`)
+    //   done(null, id)
+    // })
   }
 }
 
