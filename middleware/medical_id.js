@@ -25,12 +25,16 @@ module.exports = {
 
     // Check for valid expiration date
     if (!expiration.isValid()) {
-      return next(new Error(`Could not parse the given expiration date: ${expirationDate} for a medical id`))
+      return res.status(400).json({
+        message: `Could not parse the given expiration date: ${expirationDate} for a medical id`
+      })
     }
 
     // Check if the id has expired
     if (now.isAfter(expiration)) {
-      return next(new Error(`This medical id with the given expiration of ${expirationDate} has expired`))
+      return res.status(400).json({
+        message: `This medical id with the given expiration date of ${expirationDate} is past expiration`
+      })
     }
 
     next()

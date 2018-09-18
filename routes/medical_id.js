@@ -26,7 +26,7 @@ router.get('/v1/medical_id/:user_id', (req, res) => {
 router.put('/v1/medical_id/:user_id', middleware.filterInputs, middleware.validateExpiration,
   (req, res, next) => {
     const userID = req.pathParams.user_id
-    const params = req.body
+    const params = res.locals.filteredParams
 
     MedicalID.create(userID, params, (err, id) => {
       if (err) return next(err)
@@ -36,8 +36,11 @@ router.put('/v1/medical_id/:user_id', middleware.filterInputs, middleware.valida
       })
     })
       .catch((e) => {
-        // Logging service?
-        res.status()
+        res.status(500).json({
+          message: 'Failure to save new medical id to database',
+          parameters: params,
+          raw: e
+        })
       })
   })
   .body(joi.object().required())
