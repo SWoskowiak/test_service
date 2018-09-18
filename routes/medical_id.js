@@ -26,7 +26,7 @@ router.get('/v1/medical_id/:user_id', (req, res) => {
 router.put('/v1/medical_id/:user_id', middleware.filterInputs, middleware.validateExpiration,
   (req, res, next) => {
     const userID = req.pathParams.user_id
-    const params = res.locals.filteredParams
+    const params = res.locals.filteredParams // Provided by middleware
 
     MedicalID.create(userID, params, (err, id) => {
       if (err) return next(err)
@@ -45,9 +45,24 @@ router.put('/v1/medical_id/:user_id', middleware.filterInputs, middleware.valida
   })
   .body(joi.object({
     expiration_date: joi.date().required(),
-    recommendation_number: [joi.string().required(), joi.number().required()],
+    recommendation_number: joi.string().required(),
     issuer: joi.string().required(),
     state: joi.string().required()
   }).required())
-  .response(['application/json'], 'id of created object')
-  .description('Creates a new medical ID')
+  .response(['application/json'], 'The newly created id')
+  .description('Creates and assigns a new medical ID to a given user')
+
+// Upload image for a user
+router.post('/v1/medical_id/:user_id/upload', middleware.imageUpload,
+  (req, res, next) => {
+    if (!req.file) {
+      res.status(500).json({
+        message: 'Image failed to save',
+        body: req.body
+      })
+    } else {
+      res.status(201).json({
+        workings: req.file
+      })
+    }
+  })

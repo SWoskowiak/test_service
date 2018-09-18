@@ -1,6 +1,19 @@
 const moment = require('moment')
+const multer = require('multer')
+const path = require('path')
+
+// Quick file upload setup
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, path.join(__dirname, `uploads/${req.pathParams.user_id}/medical_id`))
+  },
+  filename: (req, file, cb) => {
+    cb(null, `${req.userID}-${Date.now()}-${file.fieldname}`)
+  }
+})
 
 module.exports = {
+  // Ensure inputs are limited to only what we want to save
   filterInputs: function (req, res, next) {
     const whitelistedParams = [
       'expiration_date',
@@ -18,9 +31,10 @@ module.exports = {
     res.locals.filteredParams = filteredParams
     next()
   },
+  // Make sure we check the expiration date before accepting an ID
   validateExpiration: function (req, res, next) {
     let now = moment()
-    let expirationDate = res.locals.filteredParams.expiration_date
+    let expirationDate = res.locals.filteredParams.expiration_dat
     let expiration = moment(expirationDate)
 
     // Check for valid expiration date
@@ -38,5 +52,12 @@ module.exports = {
     }
 
     next()
-  }
+  },
+  handleImageUpload: multer({
+    storage: storage,
+    limits: {
+      fileSize: 2000000, // 2MB limit
+      files: 1 // Only one file at a time
+    }
+  })
 }
