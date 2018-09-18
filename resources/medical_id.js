@@ -1,20 +1,16 @@
 const db = require('@arangodb').db
 const medicalCollection = db._collection('medical_ids')
-const moment = require('moment')
 
 class MedicalID {
-  static validate (userID, params) {
-
+  static fetchByUser (userID, done) {
+    return done(null, 321)
   }
 
-  static fetch (userID, callback) {
-    return callback(null, 321)
-  }
-
-  static create (userID, params, callback) {
+  // Save a new medical ID and relate it to the user
+  static create (userID, params, done) {
     return Promise.resolve(medicalCollection.save(params)).then((id) => {
       console.log(`New ID: ${id}`)
-      callback(null, id)
+      done(null, id)
     })
   }
 }
