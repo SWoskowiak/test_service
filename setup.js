@@ -6,8 +6,8 @@ const collections = [
 ]
 
 const edgeCollections = [
-  'medical_id_for',
-  'state_id_for'
+  'medical_id_of',
+  'state_id_of'
 ]
 
 // Initialize collections if they do not exist
