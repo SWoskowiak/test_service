@@ -58,11 +58,16 @@ class StateID {
     params.update_time = now
 
     let updateParams = Object.assign(currentParams, params)
+    console.log('UPDATING')
+    try {
     db._query(aql`
       FOR state_id IN state_ids
         FILTER state_id._id == ${currentParams._id}
         UPDATE state_id WITH ${updateParams} IN state_ids
     `)
+    } catch (e) {
+      console.log(e)
+    }
 
     done()
   }
