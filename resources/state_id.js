@@ -7,11 +7,15 @@ class StateID {
   static fetchByUserID (userID, done) {
     let user = `users/${userID}`
     // Get all of a user's state_id's
-    let results = db._query(aql`
-      WITH users, state_ids
-      FOR vertex IN 1..1 INBOUND ${user} state_id_of
-      RETURN vertex
-    `).toArray()
+    try {
+      let results = db._query(aql`
+        WITH users, state_ids
+        FOR vertex IN 1..1 INBOUND ${user} state_id_of
+        RETURN vertex
+      `).toArray()
+    } catch (e) {
+      console.log(e)
+    }
 
     done(null, results)
   }
