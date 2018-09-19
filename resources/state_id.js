@@ -53,6 +53,9 @@ class StateID {
       if (match) {
         // Delegate to update()
         StateID.update(userID, match, params, done)
+      } else {
+        // User has other ID's but not for this state
+        StateID.create(userID, params, done)
       }
     } else {
       // Delegate to create()
