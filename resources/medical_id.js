@@ -13,9 +13,9 @@ class MedicalID {
     try {
      results = db._query(aql`
       WITH users, medical_ids
-      FOR vertex IN 1 OUTBOUND ${userKey} medical_id_for
+      FOR vertex IN 1..1 OUTBOUND ${userKey} medical_id_for
       RETURN vertex
-    `)
+    `).toArray()
     console.log('Results: ', results)
     } catch (e) {
       console.log(e)
