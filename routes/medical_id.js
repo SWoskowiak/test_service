@@ -3,6 +3,7 @@ const joi = require('joi')
 const MedicalID = require('../resources/medical_id')
 const middleware = require('../middleware/medical_id')
 
+console.log('MIDDLEWARE! \n', middleware, '\n\n\n\n')
 // users
 // name, email, dob
 
