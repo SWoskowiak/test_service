@@ -6,15 +6,15 @@ const collection = db._collection('medical_ids')
 class MedicalID {
   static fetchByUser (userID, done) {
 
-    let userKey = db._collection('users').save({name: 'Foo'})._key
+    let userKey = 'users/' + db._collection('users').save({name: 'Foo'})._key
     console.log('USER MADE: ' + userKey)
     let results
 
     try {
      results = db._query(aql`
       WITH users, medical_ids
-      FOR vertex IN 1 OUTBOUND 'users/${userKey}' medical_id_for
-      return vertex
+      FOR vertex IN 1 OUTBOUND ${userKey} medical_id_for
+      RETURN vertex
     `)
     console.log('Results: ', results)
     } catch (e) {
