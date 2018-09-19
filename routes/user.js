@@ -27,12 +27,13 @@ router.get('/v1/user/:user_id', (req, res) => {
   .description('Route for returning a given user\'s information')
 
 // Create new user
-router.put('/v1/user', middleware.filterInputs, middleware.validateDateOfBirth,
+router.put('/v1/user/:user_id', middleware.filterInputs, middleware.validateDateOfBirth,
   (req, res, next) => {
     const params = res.locals.filteredParams // Provided by middleware
+    const userID = req.pathParams.user_id
 
     try {
-      User.createOrUpdate(params, (err, id) => {
+      User.createOrUpdate(userID, params, (err, id) => {
         if (err) return next(err)
 
         if (id) {
@@ -49,6 +50,7 @@ router.put('/v1/user', middleware.filterInputs, middleware.validateDateOfBirth,
       })
     }
   })
+  .pathParam('user_id', joi.string().optional(), 'ID of user to update')
   .body(joi.object({
     date_of_birth: joi.date().required(),
     first_name: joi.string().required(),

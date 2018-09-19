@@ -21,14 +21,18 @@ class User {
   // See: https://docs.arangodb.com/3.3/Manual/Foxx/Dependencies.html#compatibility-caveats for some detail
   // Save a new user
   static createOrUpdate (userID, params, done) {
-    // Check if user exists
-    const user = User.fetchById(userID)
-    if (!user) {
+    if (userID) {
+      const user = User.fetchById(userID)
+      if (!user) {
+        // Delegate to create()
+        return done(new Error(`No user found to update with ID: ${userID}`))
+      } else {
+        // Delegate to update()
+        User.update(userID, user, params, done)
+      }
+    } else {
       // Delegate to create()
       User.create(params, done)
-    } else {
-      // Delegate to update()
-      user.update(userID, user, params, done)
     }
   }
 
@@ -39,7 +43,7 @@ class User {
     let updateParams = Object.assign(currentParams, params)
     db._query(aql`
       FOR user IN users
-        FILTER user._id == ${currentParams._id}
+        FILTER user._key == ${userID}
         UPDATE user WITH ${updateParams} IN users
     `)
 
