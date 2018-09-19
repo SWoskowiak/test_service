@@ -35,7 +35,9 @@ class StateID {
     if (existingStateIDs.length) {
       // Check if it matches the state we are trying to save currently
       let existingID = existingStateIDs.filter((stateID) => {
-        return stateID.state === params.state
+        if (stateID) {
+          return stateID.state === params.state
+        }
       })[0]
 
       if (existingID) {
