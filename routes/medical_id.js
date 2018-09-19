@@ -53,16 +53,16 @@ router.put('/v1/medical_id/:user_id', middleware.filterInputs, middleware.valida
   .description('Creates and assigns a new medical ID to a given user')
 
 // Upload image for a user
-router.post('/v1/medical_id/:user_id/upload', middleware.imageUpload,
-  (req, res, next) => {
-    if (!req.file) {
-      res.status(500).json({
-        message: 'Image failed to save',
-        body: req.body
-      })
-    } else {
-      res.status(201).json({
-        workings: req.file
-      })
-    }
-  })
+// router.post('/v1/medical_id/:user_id/upload', middleware.imageUpload,
+//   (req, res, next) => {
+//     if (!req.file) {
+//       res.status(500).json({
+//         message: 'Image failed to save',
+//         body: req.body
+//       })
+//     } else {
+//       res.status(201).json({
+//         workings: req.file
+//       })
+//     }
+//   })
