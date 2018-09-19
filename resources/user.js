@@ -10,7 +10,6 @@ class User {
         RETURN user
     `).toArray()[0]
 
-    console.log('FOUND USER:', result)
     if (done) {
       return done(null, result)
     } else {
@@ -18,18 +17,44 @@ class User {
     }
   }
 
-  // Create a new user
-  static create (params, done) {
+  // Please note: FOXX services run in a node-like environment, async is not supported in here, it operates entirely synchronously probably for concurenncy purposes
+  // See: https://docs.arangodb.com/3.3/Manual/Foxx/Dependencies.html#compatibility-caveats for some detail
+  // Save a new user
+  static createOrUpdate (userID, params, done) {
+    // Check if user exists
+    const user = User.fetchById(userID)
+    if (!user) {
+      // Delegate to create()
+      User.create(params, done)
+    } else {
+      // Delegate to update()
+      user.update(userID, user, params, done)
+    }
+  }
+
+  static update (userID, currentParams, params, done) {
+    let now = new Date().toISOString()
+    params.update_time = now
+
+    let updateParams = Object.assign(currentParams, params)
+    db._query(aql`
+      FOR user IN users
+        FILTER user._id == ${currentParams._id}
+        UPDATE user WITH ${updateParams} IN users
+    `)
+
+    done()
+  }
+
+  static create (userID, params, done) {
     // Add some helpful auditing times
     let now = new Date().toISOString()
     params.create_time = now
     params.update_time = now
 
-    // Please note: FOXX services run in a node-like environment, async is not supported in here, it operates entirely synchronously probably for concurenncy purposes
-    // See: https://docs.arangodb.com/3.3/Manual/Foxx/Dependencies.html#compatibility-caveats for some detail
-    let newUser = collection.save(params)._id
+    const newUser = collection.save(params)._key
 
-    done(null, newUser)
+    done(null, newUser._key) // Indicate we created a new resource
   }
 }
 

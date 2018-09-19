@@ -15,7 +15,7 @@ const middleware = require('../middleware/state_id')
 // upload state id and meta-data, view data, update or delete the ID/Rec
 
 // Get state_id information for a user
-router.get('/v1/state_id/:user_id', (req, res) => {
+router.get('/v1/user/:user_id/state_id/', (req, res) => {
   const userID = req.pathParams.user_id
   try {
     let data = StateID.fetchByUser(userID)
@@ -30,7 +30,7 @@ router.get('/v1/state_id/:user_id', (req, res) => {
   } catch (e) {
     res.status(500).json({
       message: 'Fetching from DB failed',
-      raw: e
+      raw: e.message
     })
   }
 })
@@ -38,16 +38,14 @@ router.get('/v1/state_id/:user_id', (req, res) => {
   .description('Route for returning a given user\'s state ID data')
 
 // Create state_id information for a user
-router.put('/v1/state_id/:user_id', middleware.filterInputs, middleware.validateExpiration,
+router.put('/v1/user/:user_id/state_id', middleware.filterInputs, middleware.validateExpiration,
   (req, res, next) => {
     const userID = req.pathParams.user_id
     const params = res.locals.filteredParams // Provided by middleware
 
     try {
       StateID.createOrUpdate(userID, params, (err, created) => {
-        console.log(err)
         if (err) throw err
-        // if (err) return next(err)
 
         if (created) {
           res.status(201).json({})
@@ -70,3 +68,25 @@ router.put('/v1/state_id/:user_id', middleware.filterInputs, middleware.validate
   }).required())
   .response(['application/json'], 'The newly created ID')
   .description('Creates and assigns a new state ID to a given user')
+
+router.delete('/v1/user/:user_id/state_id/:state', middleware.filterInputs,
+  (req, res, next) => {
+    const userID = req.pathParams.user_id
+    const state = req.pathParams.state
+
+    try {
+      StateID.delete(userID, state, (err, deleted) => {
+        if (err) throw err
+
+        if (deleted) {
+          res.status(204)
+        }
+      })
+    } catch (e) {
+      res.status(500).json({
+        message: 'Failed to delete state id from database',
+        parameters: { userID, state },
+        raw: e.message
+      })
+    }
+  })

@@ -2,6 +2,7 @@ const db = require('@arangodb').db
 const aql = require('@arangodb').aql
 const collection = db._collection('medical_ids')
 const edgeCollection = db._collection('medical_id_of')
+const User = require('./user')
 
 class MedicalID {
   static fetchByUserID (userID, done) {
@@ -20,23 +21,64 @@ class MedicalID {
     }
   }
 
+  // Please note: FOXX services run in a node-like environment, async is not supported in here, it operates entirely synchronously probably for concurenncy purposes
+  // See: https://docs.arangodb.com/3.3/Manual/Foxx/Dependencies.html#compatibility-caveats for some detail
   // Save a new medical ID and relate it to the user
+  static createOrUpdate (userID, params, done) {
+    // Ensure User exists
+    const user = User.fetchById(userID)
+    if (!user) {
+      return done(new Error(`No user found with ID: ${userID}`))
+    }
+    // Check if we have any medical id's stored already
+    const existingMedicalIDs = MedicalID.fetchByUserID(userID)
+    if (existingMedicalIDs.length) {
+      // Check if it matches the state we are trying to save currently
+      let match = existingMedicalIDs.filter((medID) => {
+        return medID.state === params.state
+      })[0]
+
+      if (match) {
+        // Delegate to update()
+        MedicalID.update(userID, match, params, done)
+      } else {
+        // User has other ID's but not for this state
+        MedicalID.create(userID, params, done)
+      }
+    } else {
+      // Delegate to create()
+      MedicalID.create(userID, params, done)
+    }
+  }
+
+  static update (userID, currentParams, params, done) {
+    let now = new Date().toISOString()
+    params.update_time = now
+
+    let updateParams = Object.assign(currentParams, params)
+    console.log('UPDATING')
+    db._query(aql`
+      FOR medical_id IN medical_ids
+        FILTER medical_id._id == ${currentParams._id}
+        UPDATE medical_id WITH ${updateParams} IN medical_ids
+    `)
+
+    done()
+  }
+
   static create (userID, params, done) {
     // Add some helpful auditing times
     let now = new Date().toISOString()
     params.create_time = now
     params.update_time = now
 
-    // Please note: FOXX services run in a node-like environment, async is not supported in here, it operates entirely synchronously probably for concurenncy purposes
-    // See: https://docs.arangodb.com/3.3/Manual/Foxx/Dependencies.html#compatibility-caveats for some detail
     let newID = collection.save(params)._key
     edgeCollection.save({
-      create_time: now,
       _from: `medical_ids/${newID}`,
       _to: `users/${userID}`
     })
 
-    done(null, newID)
+    done(null, true) // Indicate we created a new resource
   }
 }
 

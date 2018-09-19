@@ -3,17 +3,6 @@ const joi = require('joi')
 const User = require('../resources/user')
 const middleware = require('../middleware/user')
 
-// users
-// name, email, dob
-
-// medical_id
-// recommendation number, issuer, state, expiration date, image url/path
-
-// state_id
-// state id number, state, expiration date, image url/path
-
-// upload state id and meta-data, view data, update or delete the ID/Rec
-
 // Get user for a given ID
 router.get('/v1/user/:user_id', (req, res) => {
   const userID = req.pathParams.user_id
@@ -43,10 +32,14 @@ router.put('/v1/user', middleware.filterInputs, middleware.validateDateOfBirth,
     const params = res.locals.filteredParams // Provided by middleware
 
     try {
-      User.create(params, (err, id) => {
+      User.createOrUpdate(params, (err, id) => {
         if (err) return next(err)
 
-        res.status(201).json(id)
+        if (id) {
+          res.status(201).json({ key: id })
+        } else {
+          res.status(200).json({})
+        }
       })
     } catch (e) {
       res.status(500).json({

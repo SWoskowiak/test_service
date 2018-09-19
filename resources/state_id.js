@@ -52,12 +52,10 @@ class StateID {
   }
 
   static update (userID, currentParams, params, done) {
-    // Add some helpful auditing times
     let now = new Date().toISOString()
     params.update_time = now
 
     let updateParams = Object.assign(currentParams, params)
-    console.log('UPDATING')
     db._query(aql`
       FOR state_id IN state_ids
         FILTER state_id._id == ${currentParams._id}
@@ -80,6 +78,37 @@ class StateID {
     })
 
     done(null, true) // Indicate we created a new resource
+  }
+
+  static delete (userID, state, done) {
+    // Check if we have any state id's stored already
+    const existingStateIDs = StateID.fetchByUserID(userID)
+    if (existingStateIDs.length) {
+      // Check if it matches the state we are trying to save currently
+      let match = existingStateIDs.filter((stateID) => {
+        return stateID.state === state
+      })[0]
+
+      if (match) {
+        // Delete connecting edge
+        db._query(aql`
+          FOR edge IN state_id_of
+            FILTER edge._from == ${match._id}
+            REMOVE edge IN state_id_of
+        `)
+        // Delete state id entry
+        db._query(aql`
+          FOR state_id IN state_ids
+            FILTER ${match}
+            REMOVE state_id IN state_ids
+        `)
+
+        done(null, true)
+      } else {
+        // Nothing was deleted
+        done()
+      }
+    }
   }
 }
 

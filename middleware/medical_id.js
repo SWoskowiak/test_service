@@ -13,7 +13,7 @@ const moment = require('moment')
 // })
 
 module.exports = {
-  // Ensure inputs are limited to only what we want to save
+  // Ensure inputs are limited to only what we want to save/update
   filterInputs: function (req, res, next) {
     const whitelistedParams = [
       'expiration_date',
