@@ -8,11 +8,17 @@ class StateID {
   static fetchByUserID (userID, done) {
     let user = `users/${userID}`
     // Get all of a user's state_id's
-    let results = db._query(aql`
+    console.log('FETCHING STATES FROM USER', userID)
+    let results
+    try {
+    results = db._query(aql`
       WITH users, state_ids
       FOR vertex IN 1..1 INBOUND ${user} state_id_of
       RETURN vertex
     `).toArray()
+    } catch (e) {
+      console.log(e)
+    }
 
     if (done) {
       return done(null, results)
@@ -36,6 +42,7 @@ class StateID {
     console.log('MOVING ON')
     // Check if we have any state id's stored already
     const existingStateIDs = StateID.fetchByUserID(userID)
+    console.log('EXISTING IDS', existingStateIDs)
     if (existingStateIDs.length) {
       // Check if it matches the state we are trying to save currently
       let match = existingStateIDs.filter((stateID) => {
@@ -66,7 +73,7 @@ class StateID {
         UPDATE state_id WITH ${updateParams} IN state_ids
     `)
     } catch (e) {
-      console.log(e)
+      console.log('ERROR', e)
     }
 
     done()
