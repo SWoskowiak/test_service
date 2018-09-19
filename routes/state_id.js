@@ -24,9 +24,9 @@ router.get('/v1/user/:user_id/state_id/', (req, res) => {
       res.status(404).json({
         message: `State ID data for user ${userID} not found`
       })
+    } else {
+      res.send(200).json(data)
     }
-
-    res.send(200).json(data)
   } catch (e) {
     res.status(500).json({
       message: 'Fetching from DB failed',
