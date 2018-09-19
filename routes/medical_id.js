@@ -47,9 +47,7 @@ router.put('/v1/user/:user_id/medical_id', middleware.filterInputs, middleware.v
       MedicalID.create(userID, params, (err, id) => {
         if (err) return next(err)
 
-        res.status(201).json({
-          working: id
-        })
+        res.status(201).json({ key: id })
       })
     } catch (e) {
       res.status(500).json({

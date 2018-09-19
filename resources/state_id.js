@@ -75,6 +75,7 @@ class StateID {
 
     let newID = collection.save(params)._key
     edgeCollection.save({
+      create_time: now,
       _from: `state_ids/${newID}`,
       _to: `users/${userID}`
     })

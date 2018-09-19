@@ -77,11 +77,12 @@ class MedicalID {
 
     let newID = collection.save(params)._key
     edgeCollection.save({
+      create_time: now,
       _from: `medical_ids/${newID}`,
       _to: `users/${userID}`
     })
 
-    done(null, true) // Indicate we created a new resource
+    done(null, newID._key)
   }
 
   static delete (userID, state, done) {
