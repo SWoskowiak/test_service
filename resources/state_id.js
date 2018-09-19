@@ -89,6 +89,7 @@ class StateID {
         return stateID.state === state
       })[0]
 
+      console.log('DELETING'. match)
       if (match) {
         // Delete connecting edge
         db._query(aql`
