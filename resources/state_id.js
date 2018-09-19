@@ -20,8 +20,10 @@ class StateID {
   // See: https://docs.arangodb.com/3.3/Manual/Foxx/Dependencies.html#compatibility-caveats for some detail
   // Save a new state ID and relate it to the user
   static createOrUpdate (userID, params, done) {
+    console.log('CREATE OR UPDATE')
     // Check if we have any state id's stored already
     const existingStateIDs = StateID.fetchByUserID(userID)
+    console.log('EXISTING:', existingStateIDs)
     if (existingStateIDs.length) {
       // Check if it matches the state we are trying to save currently
       let match = existingStateIDs.filter((stateID) => {
