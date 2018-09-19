@@ -37,8 +37,8 @@ router.get('/v1/state_id/:user_id', (req, res) => {
   .response(['application/json'], 'State ID information')
   .description('Route for returning a given user\'s state ID data')
 
-// Create medical_id information for a user
-router.put('/v1/medical_id/:user_id', middleware.filterInputs, middleware.validateExpiration,
+// Create state_id information for a user
+router.put('/v1/state_id/:user_id', middleware.filterInputs, middleware.validateExpiration,
   (req, res, next) => {
     const userID = req.pathParams.user_id
     const params = res.locals.filteredParams // Provided by middleware
