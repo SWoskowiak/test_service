@@ -10,6 +10,7 @@ class User {
         RETURN user
     `).toArray()[0]
 
+    console.log('FOUND USER:', result)
     if (done) {
       return done(null, result)
     } else {
