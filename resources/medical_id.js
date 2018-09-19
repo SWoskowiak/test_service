@@ -1,7 +1,7 @@
 const db = require('@arangodb').db
 const aql = require('@arangodb').aql
 const collection = db._collection('medical_ids')
-const edgeCollection = db._edgeCollection('medical_id_for')
+const edgeCollection = db._collection('medical_id_for')
 
 class MedicalID {
   static fetchByUser (userID, done) {
