@@ -86,8 +86,9 @@ class StateID {
     if (existingStateIDs.length) {
       // Check if it matches the state we are trying to save currently
       let match = existingStateIDs.filter((stateID) => {
-        console.log('STATE', stateID)
-        return stateID.state === state
+        if (stateID) {
+          return stateID.state === state
+        }
       })[0]
 
       console.log('DELETING'. match)
