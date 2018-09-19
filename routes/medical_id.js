@@ -35,13 +35,13 @@ router.put('/v1/medical_id/:user_id', middleware.filterInputs, middleware.valida
         working: id
       })
     })
-      .catch((e) => {
-        res.status(500).json({
-          message: 'Failure to save new medical id to database',
-          parameters: params,
-          raw: e
-        })
-      })
+      // .catch((e) => {
+      //   res.status(500).json({
+      //     message: 'Failure to save new medical id to database',
+      //     parameters: params,
+      //     raw: e
+      //   })
+      // })
   })
   .body(joi.object({
     expiration_date: joi.date().required(),
