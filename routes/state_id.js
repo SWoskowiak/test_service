@@ -3,7 +3,8 @@ const joi = require('joi')
 const StateID = require('../resources/state_id')
 const middleware = require('../middleware/state_id')
 
-console.log('STATE MIDDLEWARE! \n', middleware, '\n\n\n\n')
+console.log('STATE MIDDLEWARE', middleware.filterInputs)
+console.log('STATE MIDDLEWARE', middleware.validateExpiration)
 // users
 // name, email, dob
 
