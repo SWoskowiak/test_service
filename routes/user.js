@@ -27,7 +27,7 @@ router.get('/v1/user/:user_id', (req, res) => {
   .description('Route for returning a given user\'s information')
 
 // Create new user
-router.put('/v1/user/:user_id', middleware.filterInputs, middleware.validateDateOfBirth,
+router.put('/v1/user/:user_id?', middleware.filterInputs, middleware.validateDateOfBirth,
   (req, res, next) => {
     const params = res.locals.filteredParams // Provided by middleware
     const userID = req.pathParams.user_id
@@ -59,4 +59,3 @@ router.put('/v1/user/:user_id', middleware.filterInputs, middleware.validateDate
   }).required())
   .response(['application/json'], 'The newly created ID')
   .description('Creates a new user')
-  .pathParam('user_id', joi.string().optional(), 'ID of user to update')
