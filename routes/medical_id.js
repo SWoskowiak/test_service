@@ -28,21 +28,25 @@ router.get('/v1/user/:user_id/medical_id', (req, res) => {
 
 // Create/update medical_id information for a user
 router.put('/v1/user/:user_id/medical_id', middleware.filterInputs, middleware.validateExpiration,
-  (req, res, next) => {
+  (req, res) => {
     const userID = req.pathParams.user_id
     const params = res.locals.filteredParams // Provided by middleware
 
     try {
-      MedicalID.createOrUpdate(userID, params, (err, id) => {
-        if (err) return next(err)
+      MedicalID.createOrUpdate(userID, params, (err, created) => {
+        if (err) throw err
 
-        res.status(201).json({ key: id })
+        if (created) {
+          res.status(201).json({})
+        } else {
+          res.status(200).json({})
+        }
       })
     } catch (e) {
       res.status(500).json({
         message: 'Failed to save new medical id to database',
         parameters: params,
-        raw: e
+        raw: e.message
       })
     }
   })
