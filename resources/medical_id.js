@@ -8,11 +8,17 @@ class MedicalID {
 
     let userKey = db._collection('users').save({name: 'Foo'})._key
     console.log('USER MADE: ' + userKey)
-    const results = db._query(aql`
+    let results
+
+    try {
+     results = db._query(aql`
       WITH users, medical_ids
       FOR vertex IN 1 OUTBOUND users/${userKey} medical_id_for
       return vertex
     `)
+    } catch (e) {
+      console.log(e)
+    }
     return done(null, results)
   }
 
