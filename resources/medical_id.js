@@ -1,7 +1,7 @@
 const db = require('@arangodb').db
 const aql = require('@arangodb').aql
 const collection = db._collection('medical_ids')
-const edgeCollection = db._collection('medical_id_for')
+const edgeCollection = db._collection('medical_id_of')
 
 class MedicalID {
   static fetchByUser (userID, done) {
@@ -15,7 +15,7 @@ class MedicalID {
     try {
      results = db._query(aql`
       WITH users, medical_ids
-      FOR vertex IN 1..1 INBOUND ${userKey} medical_id_for
+      FOR vertex IN 1..1 INBOUND ${userKey} medical_id_of
       RETURN vertex
     `).toArray()
     console.log('Results: ', results)
@@ -39,7 +39,7 @@ class MedicalID {
         edge = edgeCollection.save({
           create_time: Date.now(),
           update_time: Date.now(),
-          _from: `medical_id/${newID._key}`,
+          _from: `medical_ids/${newID._key}`,
           _to: `${userID}`
         })
       } catch (e) {
