@@ -33,6 +33,7 @@ class StateID {
       console.log('NO USER!')
       return done(new Error(`No user found with ID: ${userID}`))
     }
+    console.log('MOVING ON')
     // Check if we have any state id's stored already
     const existingStateIDs = StateID.fetchByUserID(userID)
     if (existingStateIDs.length) {
