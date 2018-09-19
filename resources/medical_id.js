@@ -16,6 +16,7 @@ class MedicalID {
       FOR vertex IN 1 OUTBOUND users/${userKey} medical_id_for
       return vertex
     `)
+    console.log('Results: ', results)
     } catch (e) {
       console.log(e)
     }
