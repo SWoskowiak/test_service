@@ -1,7 +1,7 @@
 const router = require('./router')
 const joi = require('joi')
-const MedicalID = require('../resources/medical_id')
-const middleware = require('../middleware/medical_id')
+const StateID = require('../resources/state_id')
+const middleware = require('../middleware/state_id')
 
 // users
 // name, email, dob
@@ -14,15 +14,15 @@ const middleware = require('../middleware/medical_id')
 
 // upload state id and meta-data, view data, update or delete the ID/Rec
 
-// Get medical_id information for a user
-router.get('/v1/medical_id/:user_id', (req, res) => {
+// Get state_id information for a user
+router.get('/v1/state_id/:user_id', (req, res) => {
   const userID = req.pathParams.user_id
   try {
-    let data = MedicalID.fetchByUser(userID)
+    let data = StateID.fetchByUser(userID)
 
     if (!data) {
       res.status(404).json({
-        message: `Medical ID data for user ${userID} not found`
+        message: `State ID data for user ${userID} not found`
       })
     }
 
@@ -34,8 +34,8 @@ router.get('/v1/medical_id/:user_id', (req, res) => {
     })
   }
 })
-  .response(['application/json'], 'Medical ID information')
-  .description('Route for returning a given user\'s medical ID data')
+  .response(['application/json'], 'State ID information')
+  .description('Route for returning a given user\'s state ID data')
 
 // Create medical_id information for a user
 router.put('/v1/medical_id/:user_id', middleware.filterInputs, middleware.validateExpiration,
@@ -44,16 +44,18 @@ router.put('/v1/medical_id/:user_id', middleware.filterInputs, middleware.valida
     const params = res.locals.filteredParams // Provided by middleware
 
     try {
-      MedicalID.create(userID, params, (err, id) => {
+      StateID.createOrUpdate(userID, params, (err, created) => {
         if (err) return next(err)
 
-        res.status(201).json({
-          working: id
-        })
+        if (created) {
+          res.status(201).json({})
+        } else {
+          res.status(200).json({})
+        }
       })
     } catch (e) {
       res.status(500).json({
-        message: 'Failed to save new medical id to database',
+        message: 'Failed to save new state id to database',
         parameters: params,
         raw: e
       })
@@ -61,24 +63,8 @@ router.put('/v1/medical_id/:user_id', middleware.filterInputs, middleware.valida
   })
   .body(joi.object({
     expiration_date: joi.date().required(),
-    recommendation_number: joi.string().required(),
-    issuer: joi.string().required(),
+    id_number: joi.string().required(),
     state: joi.string().required()
   }).required())
   .response(['application/json'], 'The newly created ID')
-  .description('Creates and assigns a new medical ID to a given user')
-
-// Upload image for a user
-// router.post('/v1/medical_id/:user_id/upload', middleware.imageUpload,
-//   (req, res, next) => {
-//     if (!req.file) {
-//       res.status(500).json({
-//         message: 'Image failed to save',
-//         body: req.body
-//       })
-//     } else {
-//       res.status(201).json({
-//         workings: req.file
-//       })
-//     }
-//   })
+  .description('Creates and assigns a new state ID to a given user')

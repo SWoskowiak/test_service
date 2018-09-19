@@ -34,7 +34,7 @@ module.exports = {
   // Make sure we check the expiration date before accepting an ID
   validateExpiration: function (req, res, next) {
     let now = moment()
-    let expirationDate = res.locals.filteredParams.expiration_dat
+    let expirationDate = res.locals.filteredParams.expiration_date
     let expiration = moment(expirationDate)
 
     // Check for valid expiration date

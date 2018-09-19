@@ -1,60 +1,66 @@
-// const router = require('./router')
-// const joi = require('joi')
-// const MedicalID = require('../resources/medical_id')
+const router = require('./router')
+const joi = require('joi')
+const User = require('../resources/user')
+const middleware = require('../middleware/user')
 
-// // users
-// // name, email, dob
+// users
+// name, email, dob
 
-// // medical_id
-// // recommendation number, issuer, state, expiration date, image url/path
+// medical_id
+// recommendation number, issuer, state, expiration date, image url/path
 
-// // state_id
-// // state id number, state, expiration date, image url/path
+// state_id
+// state id number, state, expiration date, image url/path
 
-// // upload state id and meta-data, view data, update or delete the ID/Rec
+// upload state id and meta-data, view data, update or delete the ID/Rec
 
-// // Basic middleware that adds a user resource to res.locals
-// function userMiddleware (req, res, next) {
-//   const userID = req.pathParams.user_id
-//   res.locals = res.locals || {}
+// Get user for a given ID
+router.get('/v1/user/:user_id', (req, res) => {
+  const userID = req.pathParams.user_id
+  try {
+    let user = User.fetchById(userID)
 
-//   // Fetch a medical ID 
-//   MedicalID.fetch(userID, (err, id) => {
-//     if (err) return next(err)
+    if (!user) {
+      res.status(404).json({
+        message: `User with ID: ${userID} not found`
+      })
+    }
 
-//     res.locals.medicalID = id
-//     next()
-//   })
-// }
+    res.send(200).json(user)
+  } catch (e) {
+    res.status(500).json({
+      message: 'Fetching from DB failed',
+      raw: e
+    })
+  }
+})
+  .response(['application/json'], 'User data')
+  .description('Route for returning a given user\'s information')
 
-// // Get user information
-// router.get('/v1/user/:user_id', userMiddleware, (req, res, next) => {
-//   const userID = req.pathParams.user_id
+// Create new user
+router.put('/v1/user', middleware.filterInputs, middleware.validateDateOfBirth,
+  (req, res, next) => {
+    const params = res.locals.filteredParams // Provided by middleware
 
-//   MedicalID.fetch(userID, (err, medicalID) => {
-//     if (err) return next(err)
+    try {
+      User.create(params, (err, id) => {
+        if (err) return next(err)
 
-//     res.status(200).json(medicalID) // Return the medical ID
-//   })
-//   res.send(`Hello ${req.pathParams.user_id}!, your medical id# is: ${res.locals.medicalID} `)
-// })
-//   .response(['application/json'], 'A generic greeting.')
-//   .summary('Generic greeting')
-//   .description('Prints a generic greeting.')
-
-// // Create medical_id information for a user
-// router.put('/v1/medical_id/:user_id', (req, res, next) => {
-//   const userID = req.pathParams.user_id
-//   const params = req.body
-
-//   MedicalID.create(userID, params, (err, id) => {
-//     if (err) return next(err)
-
-//     res.status(201).json({
-//       working: id
-//     })
-//   })
-// })
-//   .body(joi.object().required())
-//   .response(['application/json'], 'id of created object')
-//   .description('Creates a new medical ID')
+        res.status(201).json(id)
+      })
+    } catch (e) {
+      res.status(500).json({
+        message: 'Failure to save new user to database',
+        parameters: params,
+        raw: e
+      })
+    }
+  })
+  .body(joi.object({
+    date_of_birth: joi.date().required(),
+    first_name: joi.string().required(),
+    last_name: joi.string().required(),
+    email: joi.string().email().required(),
+  }).required())
+  .response(['application/json'], 'The newly created ID')
+  .description('Creates a new user')
