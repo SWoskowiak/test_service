@@ -99,7 +99,7 @@ class StateID {
         // Delete state id entry
         db._query(aql`
           FOR state_id IN state_ids
-            FILTER state_id == ${match}
+            FILTER state_id._id == ${match._id}
             REMOVE state_id IN state_ids
         `)
 
