@@ -34,12 +34,13 @@ class MedicalID {
     console.log(`Created new ID ${newID._key}`)
     if (newID) {
       console.log('CREATING EDGE')
+      let edge
       try {
-        let edge = edgeCollection.save({
+        edge = edgeCollection.save({
           create_time: Date.now(),
           update_time: Date.now(),
-          _from: newID._id,
-          _to: `users/${userID}`
+          _from: `medical_id/${newID._key}`,
+          _to: `${userID}`
         })
       } catch (e) {
         console.log(e)
