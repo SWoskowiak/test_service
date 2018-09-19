@@ -9,7 +9,7 @@ router.get('/v1/user/:user_id/medical_id', (req, res) => {
   try {
     let data = MedicalID.fetchByUserID(userID)
 
-    if (!data) {
+    if (!data || !data.length) {
       res.status(404).json({
         message: `Medical ID data for user ${userID} not found`
       })
