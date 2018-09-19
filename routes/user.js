@@ -19,7 +19,7 @@ router.get('/v1/user/:user_id', (req, res) => {
   } catch (e) {
     res.status(500).json({
       message: 'Fetching from DB failed',
-      raw: e
+      raw: e.message
     })
   }
 })

@@ -35,7 +35,7 @@ module.exports = {
     // Check if the user is at least 21
     if (now.subtract(21, 'years').isBefore(dob)) {
       return res.status(400).json({
-        message: `User with given date of birth: ${dateOfBirth} is not 21`
+        message: `User with given date of birth: ${dateOfBirth} is under 21 years of age`
       })
     }
 
