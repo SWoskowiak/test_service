@@ -3,17 +3,6 @@ const joi = require('joi')
 const MedicalID = require('../resources/medical_id')
 const middleware = require('../middleware/medical_id')
 
-// users
-// name, email, dob
-
-// medical_id
-// recommendation number, issuer, state, expiration date, image url/path
-
-// state_id
-// state id number, state, expiration date, image url/path
-
-// upload state id and meta-data, view data, update or delete the ID/Rec
-
 // Get medical_id information for a user
 router.get('/v1/user/:user_id/medical_id', (req, res) => {
   const userID = req.pathParams.user_id
@@ -37,14 +26,14 @@ router.get('/v1/user/:user_id/medical_id', (req, res) => {
   .response(['application/json'], 'Medical ID information')
   .description('Route for returning a given user\'s medical ID data')
 
-// Create medical_id information for a user
+// Create/update medical_id information for a user
 router.put('/v1/user/:user_id/medical_id', middleware.filterInputs, middleware.validateExpiration,
   (req, res, next) => {
     const userID = req.pathParams.user_id
     const params = res.locals.filteredParams // Provided by middleware
 
     try {
-      MedicalID.create(userID, params, (err, id) => {
+      MedicalID.createOrUpdate(userID, params, (err, id) => {
         if (err) return next(err)
 
         res.status(201).json({ key: id })
@@ -63,8 +52,8 @@ router.put('/v1/user/:user_id/medical_id', middleware.filterInputs, middleware.v
     issuer: joi.string().required(),
     state: joi.string().required()
   }).required())
-  .response(['application/json'], 'The newly created ID')
-  .description('Creates and assigns a new medical ID to a given user')
+  .response(['application/json'], 'The created/updated ID')
+  .description('Creates and assigns a new medical ID to a given user or updates a one if the state matches an existing one')
 
 router.delete('/v1/user/:user_id/medical_id/:state',
   (req, res, next) => {

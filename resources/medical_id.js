@@ -14,7 +14,6 @@ class MedicalID {
       RETURN vertex
     `).toArray()[0]
 
-    console.log('RESULTS', results)
     if (done) {
       return done(null, results)
     } else {
