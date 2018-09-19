@@ -18,7 +18,7 @@ const middleware = require('../middleware/medical_id')
 router.get('/v1/user/:user_id/medical_id', (req, res) => {
   const userID = req.pathParams.user_id
   try {
-    let data = MedicalID.fetchByUser(userID)
+    let data = MedicalID.fetchByUserID(userID)
 
     if (!data) {
       res.status(404).json({
