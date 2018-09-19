@@ -68,6 +68,30 @@ router.put('/v1/medical_id/:user_id', middleware.filterInputs, middleware.valida
   .response(['application/json'], 'The newly created ID')
   .description('Creates and assigns a new medical ID to a given user')
 
+router.delete('/v1/user/:user_id/medical_id/:state',
+  (req, res, next) => {
+    const userID = req.pathParams.user_id
+    const state = req.pathParams.state
+
+    try {
+      MedicalID.delete(userID, state, (err, deleted) => {
+        if (err) throw err
+
+        if (deleted) {
+          res.status(204)
+        } else {
+          res.status(404)
+        }
+      })
+    } catch (e) {
+      res.status(500).json({
+        message: 'Failed to delete medical id from database',
+        parameters: { userID, state },
+        raw: e.message
+      })
+    }
+  })
+
 // Upload image for a user
 // router.post('/v1/medical_id/:user_id/upload', middleware.imageUpload,
 //   (req, res, next) => {

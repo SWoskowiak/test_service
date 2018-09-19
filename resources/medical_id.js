@@ -34,13 +34,15 @@ class MedicalID {
     const existingMedicalIDs = MedicalID.fetchByUserID(userID)
     if (existingMedicalIDs.length) {
       // Check if it matches the state we are trying to save currently
-      let match = existingMedicalIDs.filter((medID) => {
-        return medID.state === params.state
+      let existingID = existingMedicalIDs.filter((medID) => {
+        if (medID) {
+          return medID.state === params.state
+        }
       })[0]
 
-      if (match) {
+      if (existingID) {
         // Delegate to update()
-        MedicalID.update(userID, match, params, done)
+        MedicalID.update(userID, existingID, params, done)
       } else {
         // User has other ID's but not for this state
         MedicalID.create(userID, params, done)
@@ -79,6 +81,39 @@ class MedicalID {
     })
 
     done(null, true) // Indicate we created a new resource
+  }
+
+  static delete (userID, state, done) {
+    // Check if we have any medical id's stored already
+    const existingStateIDs = MedicalID.fetchByUserID(userID)
+    if (existingStateIDs.length) {
+      // Check if it matches the state we are trying to save currently
+      let existingID = existingStateIDs.filter((stateID) => {
+        if (stateID) {
+          return stateID.state === state
+        }
+      })[0]
+
+      if (existingID) {
+        // Delete connecting edge
+        db._query(aql`
+          FOR edge IN medical_id_of
+            FILTER edge._from == ${existingID._id}
+            REMOVE edge IN medical_id_of
+        `)
+        // Delete medical id entry
+        db._query(aql`
+          FOR medical_id IN medical_ids
+            FILTER medical_id._id == ${existingID._id}
+            REMOVE medical_id IN medical_ids
+        `)
+
+        done(null, true)
+      } else {
+        // Nothing was deleted
+        done()
+      }
+    }
   }
 }
 
