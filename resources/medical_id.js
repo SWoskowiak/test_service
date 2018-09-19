@@ -1,7 +1,7 @@
 const db = require('@arangodb').db
 const aql = require('@arangodb').aql
 const collection = db._collection('medical_ids')
-const edgeCollection = db._collection('medical_id_for')
+const edgeCollection = db._edgeCollection('medical_id_for')
 
 class MedicalID {
   static fetchByUser (userID, done) {
@@ -31,16 +31,18 @@ class MedicalID {
     // Please note: FOXX services run in a node-like environment, async is not properly supported in here, it operates entirely synchronously
     // See: https://docs.arangodb.com/3.3/Manual/Foxx/Dependencies.html#compatibility-caveats
     let newID = collection.save(params)
+    console.log(`Created new ID ${newID._key}`)
     if (newID) {
-      edgeCollection.save({
+      let edge = edgeCollection.save({
         create_time: Date.now(),
         update_time: Date.now(),
         _from: newID._id,
         _to: `users/${userID}`
       })
+      console.log(`Created new Edge ${edge._key}`)
+      done(null, newID)
     }
 
-    done(null, newID)
   }
 }
 
