@@ -7,8 +7,9 @@ class StateID {
   static fetchByUserID (userID, done) {
     let user = `users/${userID}`
     // Get all of a user's state_id's
+    let results
     try {
-      let results = db._query(aql`
+      results = db._query(aql`
         WITH users, state_ids
         FOR vertex IN 1..1 INBOUND ${user} state_id_of
         RETURN vertex
@@ -17,7 +18,11 @@ class StateID {
       console.log(e)
     }
 
-    done(null, results)
+    if (done) {
+      return done(null, results)
+    } else {
+      return results
+    }
   }
 
   // Please note: FOXX services run in a node-like environment, async is not supported in here, it operates entirely synchronously probably for concurenncy purposes
