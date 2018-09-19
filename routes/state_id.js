@@ -69,7 +69,7 @@ router.put('/v1/user/:user_id/state_id', middleware.filterInputs, middleware.val
   .response(['application/json'], 'The newly created ID')
   .description('Creates and assigns a new state ID to a given user')
 
-router.delete('/v1/user/:user_id/state_id/:state', middleware.filterInputs,
+router.delete('/v1/user/:user_id/state_id/:state',
   (req, res, next) => {
     const userID = req.pathParams.user_id
     const state = req.pathParams.state
@@ -80,6 +80,8 @@ router.delete('/v1/user/:user_id/state_id/:state', middleware.filterInputs,
 
         if (deleted) {
           res.status(204)
+        } else {
+          res.status(404)
         }
       })
     } catch (e) {
