@@ -39,14 +39,13 @@ class StateID {
         return stateID.state === params.state
       })[0]
 
-      // If we have a match make sure we only update new fields
       if (match) {
         // Delegate to update()
         StateID.update(userID, match, params, done)
-      } else {
-        // Delegate to create()
-        StateID.create(userID, params, done)
       }
+    } else {
+      // Delegate to create()
+      StateID.create(userID, params, done)
     }
   }
 
