@@ -8,8 +8,8 @@ class MedicalID {
 
     let userKey = 'users/' + db._collection('users').save({name: 'Foo'})._key
 
-    MedicalID.create(userKey, {}, (err, done) => {
     console.log('USER MADE: ' + userKey)
+    MedicalID.create(userKey, {}, (err, result) => {
     let results
 
     try {
@@ -33,6 +33,7 @@ class MedicalID {
     let newID = collection.save(params)
     console.log(`Created new ID ${newID._key}`)
     if (newID) {
+      console.log('CREATING EDGE')
       let edge = edgeCollection.save({
         create_time: Date.now(),
         update_time: Date.now(),
