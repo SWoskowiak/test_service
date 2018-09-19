@@ -20,7 +20,8 @@ router.get('/v1/user/:user_id/state_id/', (req, res) => {
   try {
     let data = StateID.fetchByUserID(userID)
 
-    if (!data) {
+    console.log('DATA', data)
+    if (!data || !data.length) {
       res.status(404).json({
         message: `State ID data for user ${userID} not found`
       })
