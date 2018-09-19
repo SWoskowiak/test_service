@@ -13,7 +13,11 @@ class MedicalID {
       RETURN vertex
     `).toArray()[0]
 
-    done(null, results)
+    if (done) {
+      return done(null, results)
+    } else {
+      return results
+    }
   }
 
   // Save a new medical ID and relate it to the user

@@ -10,7 +10,11 @@ class User {
         RETURN user
     `).toArray()[0]
 
-    done(null, result)
+    if (done) {
+      return done(null, result)
+    } else {
+      return result
+    }
   }
 
   // Create a new user

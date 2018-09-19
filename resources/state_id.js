@@ -2,21 +2,17 @@ const db = require('@arangodb').db
 const aql = require('@arangodb').aql
 const collection = db._collection('state_ids')
 const edgeCollection = db._collection('state_id_of')
+const User = require('./user')
 
 class StateID {
   static fetchByUserID (userID, done) {
     let user = `users/${userID}`
     // Get all of a user's state_id's
-    let results
-    try {
-      results = db._query(aql`
-        WITH users, state_ids
-        FOR vertex IN 1..1 INBOUND ${user} state_id_of
-        RETURN vertex
-      `).toArray()
-    } catch (e) {
-      console.log(e)
-    }
+    let results = db._query(aql`
+      WITH users, state_ids
+      FOR vertex IN 1..1 INBOUND ${user} state_id_of
+      RETURN vertex
+    `).toArray()
 
     if (done) {
       return done(null, results)
@@ -29,10 +25,13 @@ class StateID {
   // See: https://docs.arangodb.com/3.3/Manual/Foxx/Dependencies.html#compatibility-caveats for some detail
   // Save a new state ID and relate it to the user
   static createOrUpdate (userID, params, done) {
-    console.log('CREATE OR UPDATE')
+    // Ensure User exists
+    const user = User.fetchByUserID(userID)
+    if (!user) {
+      return done(new Error(`No user found with ID: ${userID}`))
+    }
     // Check if we have any state id's stored already
     const existingStateIDs = StateID.fetchByUserID(userID)
-    console.log('EXISTING:', existingStateIDs)
     if (existingStateIDs.length) {
       // Check if it matches the state we are trying to save currently
       let match = existingStateIDs.filter((stateID) => {
