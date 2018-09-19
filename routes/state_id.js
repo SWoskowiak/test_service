@@ -59,7 +59,7 @@ router.put('/v1/state_id/:user_id', middleware.filterInputs, middleware.validate
       res.status(500).json({
         message: 'Failed to save new state id to database',
         parameters: params,
-        raw: e
+        raw: e.message
       })
     }
   })
