@@ -60,7 +60,7 @@ router.put('/v1/user', middleware.filterInputs, middleware.validateDateOfBirth,
     date_of_birth: joi.date().required(),
     first_name: joi.string().required(),
     last_name: joi.string().required(),
-    email: joi.string().email().required(),
+    email: joi.string().email().required()
   }).required())
   .response(['application/json'], 'The newly created ID')
   .description('Creates a new user')
