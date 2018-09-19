@@ -8,17 +8,11 @@ class StateID {
   static fetchByUserID (userID, done) {
     let user = `users/${userID}`
     // Get all of a user's state_id's
-    console.log('FETCHING STATES FROM USER', userID)
-    let results
-    try {
-    results = db._query(aql`
+    let results = db._query(aql`
       WITH users, state_ids
       FOR vertex IN 1..1 INBOUND ${user} state_id_of
       RETURN vertex
     `).toArray()
-    } catch (e) {
-      console.log(e)
-    }
 
     if (done) {
       return done(null, results)
@@ -32,23 +26,17 @@ class StateID {
   // Save a new state ID and relate it to the user
   static createOrUpdate (userID, params, done) {
     // Ensure User exists
-    console.log('GETTING USER', userID)
     const user = User.fetchById(userID)
-    console.log('USER', user)
     if (!user) {
-      console.log('NO USER!')
       return done(new Error(`No user found with ID: ${userID}`))
     }
-    console.log('MOVING ON')
     // Check if we have any state id's stored already
     const existingStateIDs = StateID.fetchByUserID(userID)
-    console.log('EXISTING IDS', existingStateIDs)
     if (existingStateIDs.length) {
       // Check if it matches the state we are trying to save currently
       let match = existingStateIDs.filter((stateID) => {
         return stateID.state === params.state
       })[0]
-      console.log('MATCH', match)
 
       if (match) {
         // Delegate to update()
@@ -70,15 +58,11 @@ class StateID {
 
     let updateParams = Object.assign(currentParams, params)
     console.log('UPDATING')
-    try {
     db._query(aql`
       FOR state_id IN state_ids
         FILTER state_id._id == ${currentParams._id}
         UPDATE state_id WITH ${updateParams} IN state_ids
     `)
-    } catch (e) {
-      console.log('ERROR', e)
-    }
 
     done()
   }
