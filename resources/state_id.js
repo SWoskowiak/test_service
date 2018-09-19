@@ -34,13 +34,13 @@ class StateID {
     const existingStateIDs = StateID.fetchByUserID(userID)
     if (existingStateIDs.length) {
       // Check if it matches the state we are trying to save currently
-      let match = existingStateIDs.filter((stateID) => {
+      let existingID = existingStateIDs.filter((stateID) => {
         return stateID.state === params.state
       })[0]
 
-      if (match) {
+      if (existingID) {
         // Delegate to update()
-        StateID.update(userID, match, params, done)
+        StateID.update(userID, existingID, params, done)
       } else {
         // User has other ID's but not for this state
         StateID.create(userID, params, done)
@@ -85,24 +85,24 @@ class StateID {
     const existingStateIDs = StateID.fetchByUserID(userID)
     if (existingStateIDs.length) {
       // Check if it matches the state we are trying to save currently
-      let matching = existingStateIDs.filter((stateID) => {
+      let existingID = existingStateIDs.filter((stateID) => {
         if (stateID) {
           return stateID.state === state
         }
       })[0]
 
-      console.log('DELETING', matching)
-      if (matching) {
+      console.log('DELETING', existingID)
+      if (existingID) {
         // Delete connecting edge
         db._query(aql`
           FOR edge IN state_id_of
-            FILTER edge._from == ${matching._id}
+            FILTER edge._from == ${existingID._id}
             REMOVE edge IN state_id_of
         `)
         // Delete state id entry
         db._query(aql`
           FOR state_id IN state_ids
-            FILTER state_id._id == ${matching._id}
+            FILTER state_id._id == ${existingID._id}
             REMOVE state_id IN state_ids
         `)
 
