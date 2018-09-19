@@ -13,7 +13,7 @@ class MedicalID {
     try {
      results = db._query(aql`
       WITH users, medical_ids
-      FOR vertex IN 1 OUTBOUND users/${userKey} medical_id_for
+      FOR vertex IN 1 OUTBOUND 'users/${userKey}' medical_id_for
       return vertex
     `)
     console.log('Results: ', results)
