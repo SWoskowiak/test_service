@@ -1,22 +1,28 @@
 const db = require('@arangodb').db
-const medicalIDCollection = db._collection('medical_ids')
+const aql = require('@arangodb').aql
+const collection = db._collection('medical_ids')
+// const edges = db._collection('medical_id_for')
 
 class MedicalID {
   static fetchByUser (userID, done) {
-    return done(null, 321)
+
+    let userKey = db._collection('users').save({name: 'Foo'})._key
+    console.log('USER MADE: ' + userKey)
+    const results = db._query(aql`
+      WITH users, medical_ids
+      FOR vertex IN 1 OUTBOUND users/${userKey} medical_id_for
+      return vertex
+    `)
+    return done(null, results)
   }
 
   // Save a new medical ID and relate it to the user
   static create (userID, params, done) {
-    // Please note: FOXX services run in a node-like environment, async is not properly supported in here
+    // Please note: FOXX services run in a node-like environment, async is not properly supported in here, it operates entirely synchronously
     // See: https://docs.arangodb.com/3.3/Manual/Foxx/Dependencies.html#compatibility-caveats
-    let newID = medicalIDCollection.save(params)
+    let newID = collection.save(params)
 
     done(null, newID)
-    // return Promise.resolve(medicalIDCollection.save(params)).then((id) => {
-    //   console.log(`New ID: ${id}`)
-    //   done(null, id)
-    // })
   }
 }
 

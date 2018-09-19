@@ -16,11 +16,24 @@ const middleware = require('../middleware/medical_id')
 
 // Get medical_id information for a user
 router.get('/v1/medical_id/:user_id', (req, res) => {
-  res.send(`Hello ${req.pathParams.user_id}!, your medical id# is: ${res.locals.medicalID} `)
+  const userID = req.pathParams.user_id
+  try {
+    let data = MedicalID.fetchByUser(userID)
+
+    if (!data) {
+      res.status(404).json({
+        message: `Medical ID data for user ${userID} not found`
+      })
+    }
+
+    res.send(200).json(data)
+  } catch (e) {
+    res.status(500)
+  }
+  // res.send(`Hello ${req.pathParams.user_id}!, your medical id# is: ${res.locals.medicalID} `)
 })
-  .response(['text/plain'], 'A generic greeting.')
-  .summary('Generic greeting')
-  .description('Prints a generic greeting.')
+  .response(['application/json'], 'Medical ID information')
+  .description('Route for returning a given user\'s medical ID information')
 
 // Create medical_id information for a user
 router.put('/v1/medical_id/:user_id', middleware.filterInputs, middleware.validateExpiration,
@@ -28,20 +41,21 @@ router.put('/v1/medical_id/:user_id', middleware.filterInputs, middleware.valida
     const userID = req.pathParams.user_id
     const params = res.locals.filteredParams // Provided by middleware
 
-    MedicalID.create(userID, params, (err, id) => {
-      if (err) return next(err)
+    try {
+      MedicalID.create(userID, params, (err, id) => {
+        if (err) return next(err)
 
-      res.status(201).json({
-        working: id
+        res.status(201).json({
+          working: id
+        })
       })
-    })
-      // .catch((e) => {
-      //   res.status(500).json({
-      //     message: 'Failure to save new medical id to database',
-      //     parameters: params,
-      //     raw: e
-      //   })
-      // })
+    } catch (e) {
+      res.status(500).json({
+        message: 'Failure to save new medical id to database',
+        parameters: params,
+        raw: e
+      })
+    }
   })
   .body(joi.object({
     expiration_date: joi.date().required(),
