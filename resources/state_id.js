@@ -26,7 +26,7 @@ class StateID {
   // Save a new state ID and relate it to the user
   static createOrUpdate (userID, params, done) {
     // Ensure User exists
-    const user = User.fetchByUserID(userID)
+    const user = User.fetchById(userID)
     if (!user) {
       return done(new Error(`No user found with ID: ${userID}`))
     }
