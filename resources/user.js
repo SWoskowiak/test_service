@@ -20,37 +20,21 @@ class User {
   // Please note: FOXX services run in a node-like environment, async is not supported in here, it operates entirely synchronously probably for concurenncy purposes
   // See: https://docs.arangodb.com/3.3/Manual/Foxx/Dependencies.html#compatibility-caveats for some detail
   // Save a new user
-  static createOrUpdate (userID, params, done) {
-    if (userID) {
-      const user = User.fetchById(userID)
-      if (!user) {
-        // Delegate to create()
-        return done(new Error(`No user found to update with ID: ${userID}`))
-      } else {
-        // Delegate to update()
-        User.update(userID, user, params, done)
-      }
-    } else {
-      // Delegate to create()
-      User.create(params, done)
-    }
-  }
-
-  static update (userID, currentParams, params, done) {
+  static update (userID, params, done) {
     let now = new Date().toISOString()
     params.update_time = now
 
-    let updateParams = Object.assign(currentParams, params)
     db._query(aql`
       FOR user IN users
         FILTER user._key == ${userID}
-        UPDATE user WITH ${updateParams} IN users
+        UPDATE user WITH ${params} IN users
     `)
 
-    done()
+    done(null, true)
   }
 
-  static create (userID, params, done) {
+  // Create a new user
+  static create (params, done) {
     // Add some helpful auditing times
     let now = new Date().toISOString()
     params.create_time = now
