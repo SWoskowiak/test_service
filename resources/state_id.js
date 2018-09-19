@@ -48,6 +48,7 @@ class StateID {
       let match = existingStateIDs.filter((stateID) => {
         return stateID.state === params.state
       })[0]
+      console.log('MATCH', match)
 
       if (match) {
         // Delegate to update()
