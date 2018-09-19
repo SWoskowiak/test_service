@@ -30,6 +30,7 @@ class StateID {
     const user = User.fetchById(userID)
     console.log('USER', user)
     if (!user) {
+      console.log('NO USER!')
       return done(new Error(`No user found with ID: ${userID}`))
     }
     // Check if we have any state id's stored already

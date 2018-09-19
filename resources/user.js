@@ -6,7 +6,7 @@ class User {
   static fetchById (userID, done) {
     let result = db._query(aql`
       FOR user IN users
-        FILTER user._id == ${userID}
+        FILTER user._key == ${userID}
         RETURN user
     `).toArray()[0]
 
