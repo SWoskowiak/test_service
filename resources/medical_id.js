@@ -81,7 +81,7 @@ class MedicalID {
       _to: `users/${userID}`
     })
 
-    done(null, newID._key)
+    done(null, newID)
   }
 
   static delete (userID, state, done) {
