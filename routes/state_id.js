@@ -46,7 +46,8 @@ router.put('/v1/state_id/:user_id', middleware.filterInputs, middleware.validate
     try {
       StateID.createOrUpdate(userID, params, (err, created) => {
         console.log(err)
-        if (err) return next(err)
+        if (err) throw err
+        // if (err) return next(err)
 
         if (created) {
           res.status(201).json({})
