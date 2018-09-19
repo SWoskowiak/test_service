@@ -59,3 +59,4 @@ router.put('/v1/user/:user_id', middleware.filterInputs, middleware.validateDate
   }).required())
   .response(['application/json'], 'The newly created ID')
   .description('Creates a new user')
+  .pathParam('user_id', joi.string().optional(), 'ID of user to update')

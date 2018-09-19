@@ -2,6 +2,8 @@
   "author": "Stefan Woskowiak",
   "description": "A learning experience/code exam to explore Foxx services in ArangoDB",
   "name": "weedmaps-code-exam-api",
+  "version": "0.1.0",
+  "license": "MIT",
   "engines": {
     "arangodb": "^3.0.0"
   },
