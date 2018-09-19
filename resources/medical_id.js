@@ -12,7 +12,7 @@ class MedicalID {
       WITH users, medical_ids
       FOR vertex IN 1..1 INBOUND ${user} medical_id_of
       RETURN vertex
-    `).toArray()[0]
+    `).toArray()
 
     if (done) {
       return done(null, results)
