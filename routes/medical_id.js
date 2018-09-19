@@ -15,7 +15,7 @@ const middleware = require('../middleware/medical_id')
 // upload state id and meta-data, view data, update or delete the ID/Rec
 
 // Get medical_id information for a user
-router.get('/v1/medical_id/:user_id', (req, res) => {
+router.get('/v1/user/:user_id/medical_id', (req, res) => {
   const userID = req.pathParams.user_id
   try {
     let data = MedicalID.fetchByUser(userID)
@@ -38,7 +38,7 @@ router.get('/v1/medical_id/:user_id', (req, res) => {
   .description('Route for returning a given user\'s medical ID data')
 
 // Create medical_id information for a user
-router.put('/v1/medical_id/:user_id', middleware.filterInputs, middleware.validateExpiration,
+router.put('/v1/user/:user_id/medical_id', middleware.filterInputs, middleware.validateExpiration,
   (req, res, next) => {
     const userID = req.pathParams.user_id
     const params = res.locals.filteredParams // Provided by middleware

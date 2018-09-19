@@ -93,7 +93,6 @@ class StateID {
         }
       })[0]
 
-      console.log('DELETING', existingID)
       if (existingID) {
         // Delete connecting edge
         db._query(aql`
