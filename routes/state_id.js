@@ -2,11 +2,7 @@ const router = require('./router')
 const joi = require('joi')
 const StateID = require('../resources/state_id')
 const middleware = require('../middleware/state_id')
-const insane = require('../middleware/medical_id')
 
-console.log('STATE MIDDLEWARE', middleware.filterInputs)
-console.log('STATE MIDDLEWARE', middleware.validateExpiration)
-console.log('INSANE', insane)
 // users
 // name, email, dob
 
